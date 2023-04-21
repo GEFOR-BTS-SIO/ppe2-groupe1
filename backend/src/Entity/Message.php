@@ -19,11 +19,9 @@ class Message
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $message_receved = null;
 
-    #[ORM\ManyToOne(inversedBy: 'message')]
+    #[ORM\ManyToOne(inversedBy: 'iduser')]
     private ?User $user = null;
 
-    // #[ORM\ManyToOne(inversedBy: 'messages')]
-    // private ?User $user = null;
 
     public function getId(): ?int
     {
@@ -54,18 +52,6 @@ class Message
         return $this;
     }
 
-    // public function getUser(): ?User
-    // {
-    //     return $this->user;
-    // }
-
-    // public function setUser(?User $user): self
-    // {
-    //     $this->user = $user;
-
-    //     return $this;
-    // }
-
     public function getUser(): ?User
     {
         return $this->user;
@@ -77,5 +63,7 @@ class Message
 
         return $this;
     }
+
+
 
 }
