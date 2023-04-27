@@ -1,4 +1,4 @@
-import Messageriesend from './components/Messagesend'
+import Messageriesend from '../components/Messagesend'
 
 
 export default function Messagerie() {
