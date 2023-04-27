@@ -2,6 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 
 export default function UserForm() {
+  const token = localStorage.getItem('token');
   const { register, handleSubmit, watch } = useForm();
   const [message, setMessage] = useState('');
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
@@ -12,6 +13,7 @@ export default function UserForm() {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
         message_send: data.message_send,
@@ -20,7 +22,7 @@ export default function UserForm() {
     });
     const jsonResponse = await response.json();
     setMessage(jsonResponse.message);
-console.log(message)
+    console.log(message)
     // Ajouter le nouveau message à l'état (state) de messages
     setMessagesList([...messagesList, jsonResponse.message]);
   };
