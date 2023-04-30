@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
@@ -9,20 +9,28 @@ const Login = () => {
   const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
 
-  const onSubmit = async (data) => {
-    try {
-      const response = await axios.post('http://localhost:8000/api/login_check', {
-        username: data.username,
-        password: data.password,
-      });
 
-      // Si la connexion réussit, stockez l'état de connexion de l'utilisateur et redirigez-le vers la page de profil
-      setIsAuthenticated(true);
-      router.push('/messagerie');
-    } catch (error) {
-      setErrorMessage(error.message);
-    }
-  };
+
+  // dans le fichier login.tsx
+const onSubmit = async (data) => {
+  try {
+    const response = await axios.post('http://localhost:8000/api/login_check', {
+      username: data.username,
+      password: data.password,
+    });
+
+    // Stocker le token dans le localStorage
+    localStorage.setItem('token', response.data.token);
+
+    // Si la connexion réussit, stockez l'état de connexion de l'utilisateur et redirigez-le vers la page de profil
+    setIsAuthenticated(true);
+    document.cookie = `username=${data.username}; path=/`; // stocker le nom d'utilisateur dans les cookies
+    router.push('/');
+  } catch (error) {
+    setErrorMessage(error.message);
+  }
+};
+
 
   const handleLogout = () => {
     // Réinitialiser l'état de connexion de l'utilisateur et rediriger l'utilisateur vers la page de connexion

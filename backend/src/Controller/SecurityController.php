@@ -13,7 +13,7 @@ class SecurityController extends AbstractController
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->getUser()) {
-            return $this->redirectToRoute('app_user');
+            return $this->redirectToRoute('app_message_show');
         }
 
         // get the login error if there is one
