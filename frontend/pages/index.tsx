@@ -9,7 +9,11 @@ const inter = Inter({ subsets: ['latin'] })
 export default function Home() {
   return (
     <>
-      <Acceuil/>
-         </>
+<main>
+        <div>
+          <BlueRoundButton to='messagerie' text='Messagerie'></BlueRoundButton>  </div>
+      <div>
+        <BlueRoundButton to='todo' text='To Do List'></BlueRoundButton>  </div></main>
+    </>
   )
 }
