@@ -13,7 +13,8 @@ const Login = () => {
 
   // dans le fichier login.tsx
 const onSubmit = async (data) => {
-  try {
+    try {
+      
     const response = await axios.post('http://localhost:8000/api/login_check', {
       username: data.username,
       password: data.password,
@@ -25,7 +26,7 @@ const onSubmit = async (data) => {
     // Si la connexion réussit, stockez l'état de connexion de l'utilisateur et redirigez-le vers la page de profil
     setIsAuthenticated(true);
     document.cookie = `username=${data.username}; path=/`; // stocker le nom d'utilisateur dans les cookies
-    router.push('/');
+    router.push('/acceuil');
   } catch (error) {
     setErrorMessage(error.message);
   }

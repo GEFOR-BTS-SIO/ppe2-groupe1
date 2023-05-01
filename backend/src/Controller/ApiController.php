@@ -2,33 +2,29 @@
 
 namespace App\Controller;
 
+use App\Repository\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
-
-
-#[IsGranted(new Expression("is_granted('ROLE_USER')"))]
-
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ApiController extends AbstractController
-
 {
     #[Route('/api', name: 'app_user_api', methods: ['GET', 'POST'])]
-    public function index(Request $request, UserRepository $userRepository): Response
+    #[IsGranted('ROLE_USER')]
+    public function index(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
     {
-       
-$user = $this->getUser();
-$email = $user->getEmail();
+        $user = $this->getUser();
+        $email = $user->getUserIdentifier();
 
-return new Response(json_encode( [
-    'Content-Type' => 'application/json',
-    'email' => $email,
-  
-]));
+        $response = new Response($serializerInterface->serialize([
+            'email' => $email,
+        ], 'json'), 200, [
+            'Content-Type' => 'application/json'
+        ]);
 
+        return $response;
+    }
 }
-
-   
-}
-
-
