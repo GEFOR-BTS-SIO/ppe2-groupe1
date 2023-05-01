@@ -18,7 +18,8 @@ const Login = () => {
 
       // Si la connexion réussit, stockez l'état de connexion de l'utilisateur et redirigez-le vers la page de profil
       setIsAuthenticated(true);
-      router.push('/messagerie');
+      localStorage.setItem('token', response.data.token);
+      router.push('/acceuil');
     } catch (error) {
       setErrorMessage(error.message);
     }
