@@ -2,7 +2,7 @@ import { useForm } from 'react-hook-form';
 import { useState } from 'react';
 
 export default function UserForm() {
-  const token = localStorage.getItem('token');
+
   const { register, handleSubmit, watch } = useForm();
   const [message, setMessage] = useState('');
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
@@ -12,7 +12,7 @@ const onSubmit = async (data) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+      'Authorization': `Bearer ${localStorage.getItem('token')}`
     },
     body: JSON.stringify({
       message_send: data.message_send,
