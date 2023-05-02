@@ -8,7 +8,7 @@ export default function UserForm() {
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
 const onSubmit = async (data) => {
-  const response = await fetch("http://localhost:8000/api", {
+  const response = await fetch("http://localhost:8000/apiuser", {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

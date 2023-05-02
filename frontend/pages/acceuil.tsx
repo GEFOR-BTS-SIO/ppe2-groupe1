@@ -6,7 +6,7 @@ export default function Accueil() {
   useEffect(() => {
     async function fetchUserEmail() {
       try {
-        const response = await fetch('http://localhost:8000/api/message', {
+        const response = await fetch('http://localhost:8000/api', {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${localStorage.getItem('token')}`

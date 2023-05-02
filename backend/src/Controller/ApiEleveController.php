@@ -11,13 +11,11 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ApiEleveController extends AbstractController
 {
-    #[Route('/api/eleve', name: 'app_api_eleve', methods:['POST'])]
+    #[Route('/apiuser', name: 'app_api_eleve', methods:['POST'])]
     public function index(Request $request, MessageRepository $messageRepository): Response
     {
 
         $data = json_decode($request->getContent(), true);
-
-
         $message_send = $data['message_send'];
 
         //$prenom = $request->getContent('prenom');
@@ -25,11 +23,9 @@ class ApiEleveController extends AbstractController
         $message = new Message();
         $message->setMessageSend($message_send);
 
-
         //$user->setNom($nom);
 
         $messageRepository->save($message, true);
-
         $response = ['message' => $message_send ];
 
         return new Response(json_encode($response), 200, [
