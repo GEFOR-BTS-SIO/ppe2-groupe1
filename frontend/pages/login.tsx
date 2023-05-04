@@ -1,12 +1,21 @@
-import React, { useState } from 'react';
-import { useRouter } from 'next/router';
-import { useForm } from 'react-hook-form';
-import axios from 'axios';
+// Login.tsx
+import React, { useState } from "react";
+import { useForm } from "react-hook-form";
+import axios from "axios";
+import { useContext } from "react";
+import { UserContext } from "./_app";
+import { useRouter } from "next/router";
+import { Router } from "react-router-dom";
 
-const Login = () => {
-  const [errorMessage, setErrorMessage] = useState('');
+export default function Login() {
+  const { setToken, setEmail } = useContext(UserContext);
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm();
+  const [errorMessage, setErrorMessage] = useState("");
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const { register, handleSubmit, formState: { errors } } = useForm();
   const router = useRouter();
 
 
@@ -32,33 +41,39 @@ const onSubmit = async (data) => {
   }
 };
 
+      
+      setToken(response.data.token);
+      setEmail(response.data.email);
       // Si la connexion réussit, stockez l'état de connexion de l'utilisateur et redirigez-le vers la page de profil
       setIsAuthenticated(true);
-      localStorage.setItem('token', response.data.token);
-      router.push('/messagerie');
+
+      document.cookie = `username=${data.username}; path=/`; // stocker le nom d'utilisateur dans les cookies
+      router.push("/messagerie");
     } catch (error) {
       setErrorMessage(error.message);
     }
   };
-
   const handleLogout = () => {
     // Réinitialiser l'état de connexion de l'utilisateur et rediriger l'utilisateur vers la page de connexion
     setIsAuthenticated(false);
-    router.push('/login');
-  };
-
+    Router.push("/login");
+};
+  
   return (
     <div>
       {!isAuthenticated && (
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label>Username:</label>
-            <input type="text" {...register('username', { required: true })} />
+            <input type="text" {...register("username", { required: true })} />
             {errors.username && <span>Username is required</span>}
           </div>
           <div>
             <label>Password:</label>
-            <input type="password" {...register('password', { required: true })} />
+            <input
+              type="password"
+              {...register("password", { required: true })}
+            />
             {errors.password && <span>Password is required</span>}
           </div>
           <div>
@@ -75,6 +90,5 @@ const onSubmit = async (data) => {
       )}
     </div>
   );
-};
+}
 
-export default Login;

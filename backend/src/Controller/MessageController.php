@@ -44,7 +44,6 @@ class MessageController extends AbstractController
     // }
      public function index(Request $request, MessageRepository $messageRepository): Response
     {
-
     $data = json_decode($request->getContent(), true);
 
 
