@@ -2,86 +2,127 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserType;
-use App\Repository\UserRepository;
+use App\Entity\Message;
+use App\Repository\MessageRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Request;
 
-#[Route('/message')]
 class MessageController extends AbstractController
 {
-    #[Route('/', name: 'app_message_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    #[Route('/messages/{id}', name: 'message_show', methods: ['GET'])]
+    public function show(Message $message): JsonResponse
     {
-        return $this->render('message/index.html.twig', [
-            'users' => $userRepository->findAll(),
+        // Serializing the Message entity using the serializer component
+        $serializer = $this->getUser('serializer');
+        $json = $serializer->serialize($message, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
         ]);
+
+        return new JsonResponse($json, 200, [], true);
     }
 
-    #[Route('/new', name: 'app_message_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserRepository $userRepository): Response
+    #[Route('/messages', name: 'message_index', methods: ['GET'])]
+    // public function index(MessageRepository $messageRepository): JsonResponse
+    // {
+    //     // Getting all messages
+    //     $messages = $messageRepository->findAll();
+
+    //     // Serializing the messages using the serializer component
+    //     $serializer = $this->get('serializer');
+    //     $json = $serializer->serialize($messages, 'json', [
+    //         'circular_reference_handler' => function ($object) {
+    //             return $object->getId();
+    //         }
+    //     ]);
+
+    //     return new JsonResponse($json, 200, [], true);
+    // }
+     public function index(Request $request, MessageRepository $messageRepository): Response
     {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+    $data = json_decode($request->getContent(), true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->save($user, true);
 
-            return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
-        }
+    $message_send = $data['message_send'];
 
-        return $this->render('message/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
+    //$prenom = $request->getContent('prenom');
 
-    #[Route('/{id}', name: 'app_message_show', methods: ['GET'])]
-    public function show(Request $request, UserRepository $userRepository, SerializerInterface $serializer): Response
+    $message = new Message();
+    $message->setMessageSend($message_send);
+
+
+    //$user->setNom($nom);
+
+    $messageRepository->save($message, true);
+
+    $response = ['message' => $message_send ];
+
+    return new Response(json_encode($response), 200, [
+    'Content-Type' => 'application/json'
+]);
+
+}
+
+    #[Route('/messages', name: 'message_create', methods: ['POST'])]
+    public function create(Request $request): JsonResponse
     {
+        // Creating a new message
+        $message = new Message();
+
+        // Retrieving the authenticated user
         $user = $this->getUser();
-  
-
-        $response = new Response($serializer->serialize([
-            'email' => $email,
-        ], 'json'), 200, [
-            'Content-Type' => 'application/json'
-        ]);
-
-        return $response;
-    }
-
-    #[Route('/{id}/edit', name: 'app_message_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, UserRepository $userRepository): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->save($user, true);
-
-            return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour créer un message');
         }
 
-        return $this->renderForm('message/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
+        // Setting the sender of the message to the authenticated user
+        $message->setSender($user);
+
+        // Setting the content of the message
+        $content = $request->getContent();
+        $data = json_decode($content, true);
+        $message->setContent($data['content']);
+
+        // Persisting the message to the database
+        $entityManager = $this->getDoctrine()->getManager();
+        $entityManager->persist($message);
+        $entityManager->flush();
+
+        // Serializing the created message using the serializer component
+        $serializer = $this->get('serializer');
+        $json = $serializer->serialize($message, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
         ]);
+
+        return new JsonResponse($json, 201, [], true);
     }
 
-    #[Route('/{id}', name: 'app_message_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, UserRepository $userRepository): Response
+    #[Route('/messages/user', name: 'message_user', methods: ['GET'])]
+    public function userMessages(MessageRepository $messageRepository): JsonResponse
     {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $userRepository->remove($user, true);
+        // Retrieving the authenticated user
+        $user = $this->getUser();
+        if (!$user) {
+            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette ressource');
         }
 
-        return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
+        // Getting all messages for the authenticated user
+        $messages = $messageRepository->findBy(['sender' => $user]);
+
+        // Serializing the messages using the serializer component
+        $serializer = $this->get('serializer');
+        $json = $serializer->serialize($messages, 'json', [
+            'circular_reference_handler' => function ($object) {
+                return $object->getId();
+            }
+        ]);
+
+        return new JsonResponse($json, 200, [], true);
     }
 }

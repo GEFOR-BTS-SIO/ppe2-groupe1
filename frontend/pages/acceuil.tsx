@@ -1,15 +1,36 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
-import styles from '@/styles/Home.module.css'
-import Acceuil from '@/components/Acceuil'
+import { useEffect, useState } from 'react';
 
-const inter = Inter({ subsets: ['latin'] })
+export default function Accueil() {
+  const [userEmail, setUserEmail] = useState('');
 
-export default function Home() {
+  useEffect(() => {
+    async function fetchUserEmail() {
+      try {
+        const response = await fetch('http://localhost:8000/api', {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error('Une erreur est survenue lors de la récupération de l\'email');
+        }
+
+        const data = await response.json();
+        setUserEmail(data.email);
+      } catch (error) {
+        console.error(error);
+      }
+    }
+
+    fetchUserEmail();
+  }, []);
+
   return (
-    <>
-      <Acceuil/>
-         </>
-  )
+    <div>
+      <h1>Bienvenue sur la page daccueil</h1>
+      {userEmail && <p>Votre adresse email est : {userEmail}</p>}
+    </div>
+  );
 }
