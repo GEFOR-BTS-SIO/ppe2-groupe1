@@ -1,13 +1,16 @@
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import {get, useApi} from '../lib/api'
 
-export default function UserForm() {
+export default function MessageSends() {
 
   const { register, handleSubmit, watch } = useForm();
   const [message, setMessage] = useState('');
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
-const onSubmit = async (data) => {
+
+
+  const { get } = useApi => {
   const response = await fetch("http://localhost:8000/api", {
     method: 'POST',
     headers: {
