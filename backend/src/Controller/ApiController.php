@@ -9,27 +9,27 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ApiController extends AbstractController
 {
-    // #[Route('/api', name: 'app_user_api', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_USER')]
-    // public function index(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
-    // {
-    //     $user = $this->getUser();
-    //     $email = $user->getUserIdentifier();
+    #[Route('/api/users', name: 'app_user_api', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+public function index(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
+{
+   $users = $userRepository->findAll();
+//$userArray = array_map(fn(User $user) => $user->toArray(), $user_id);
+$jsonContent = $serializerInterface->serialize($users, 'json');
+$response = new JsonResponse($jsonContent, 200, [
+    'Content-Type' => 'application/json'
+]);
+return $response;
+}
 
-    //     $response = new Response($serializerInterface->serialize([
-    //         'email' => $email,
-    //     ], 'json'), 200, [
-    //         'Content-Type' => 'application/json'
-    //     ]);
 
-    //     return $response;
-    // }
+
 
 #[Route('/api/messages', name: 'app_messages', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]

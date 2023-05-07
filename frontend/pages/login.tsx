@@ -29,7 +29,7 @@ const Login = () => {
       setIsAuthenticated(true);
       setToken(response.data.token);
 
-      router.push("/pagemessage");
+      router.push("/test");
     } catch (error) {
       setErrorMessage(error.message);
     }

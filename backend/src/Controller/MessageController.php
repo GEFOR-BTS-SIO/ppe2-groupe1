@@ -80,7 +80,7 @@ class MessageController extends AbstractController
         }
 
         // Setting the sender of the message to the authenticated user
-        $message->setSender($user);
+        //$message->setSender($user);
 
         // Setting the content of the message
         $content = $request->getContent();

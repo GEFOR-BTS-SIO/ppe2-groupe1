@@ -17,16 +17,19 @@ class ApiEleveController extends AbstractController
 
         $data = json_decode($request->getContent(), true);
         $message_send = $data['message_send'];
+        $user_id = $data['iduser'];
+
 
         //$prenom = $request->getContent('prenom');
 
         $message = new Message();
         $message->setMessageSend($message_send);
+        $message->setUserId($user_id);
 
         //$user->setNom($nom);
 
         $messageRepository->save($message, true);
-        $response = ['message' => $message_send ];
+        $response = ['message' => $message_send ,];
 
         return new Response(json_encode($response), 200, [
     'Content-Type' => 'application/json'
