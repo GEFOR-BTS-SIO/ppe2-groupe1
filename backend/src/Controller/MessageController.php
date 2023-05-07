@@ -12,7 +12,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 class MessageController extends AbstractController
 {
-    #[Route('/messages/{id}', name: 'message_show', methods: ['GET'])]
+    #[Route('/messages/{id}', name: 'app_message_show', methods: ['GET'])]
     public function show(Message $message): JsonResponse
     {
         // Serializing the Message entity using the serializer component

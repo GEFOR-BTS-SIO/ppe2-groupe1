@@ -8,6 +8,7 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -21,6 +22,20 @@ class Message
 
     #[ORM\ManyToOne(inversedBy: 'iduser')]
     private ?User $user = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $sender = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $recipient = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $content = null;
+
+    // changer username par user_id
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
+    private ?User $user_id = null;
 
 
     public function getId(): ?int
@@ -64,6 +79,51 @@ class Message
         return $this;
     }
 
+    public function getSender(): ?string
+    {
+        return $this->sender;
+    }
 
+    public function setSender(string $sender): self
+    {
+        $this->sender = $sender;
 
+        return $this;
+    }
+
+    public function getRecipient(): ?string
+    {
+        return $this->recipient;
+    }
+
+    public function setRecipient(string $recipient): self
+    {
+        $this->recipient = $recipient;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): self
+    {
+        $this->content = $content;
+
+        return $this;
+    }
+
+    public function getUserId(): ?User
+    {
+        return $this->user_id;
+    }
+
+    public function setUserId(?User $user_id): self
+    {
+        $this->user_id = $user_id;
+
+        return $this;
+    }
 }
