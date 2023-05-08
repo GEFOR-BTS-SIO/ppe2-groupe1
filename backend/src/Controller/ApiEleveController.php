@@ -11,13 +11,14 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ApiEleveController extends AbstractController
 {
-    #[Route('/apiuser', name: 'app_api_eleve', methods:['POST'])]
-    public function index(Request $request, MessageRepository $messageRepository): Response
+    #[Route('/api/message', name: 'app_api_eleve', methods:['POST'])]
+ #[IsGranted('ROLE_USER')]
+    public function createMessage(Request $request, MessageRepository $messageRepository): Response
     {
 
         $data = json_decode($request->getContent(), true);
         $message_send = $data['message_send'];
-        $user_id = $data['iduser'];
+        $user_id = $data['id_user'];
 
 
         //$prenom = $request->getContent('prenom');

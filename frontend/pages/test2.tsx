@@ -1,38 +1,50 @@
-// component/Messagerie.tsx
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import User from "@/components/User";
+import axios from "axios";
+
 
 export default function Messagerie() {
   const { register, handleSubmit, watch } = useForm();
+  const [selectedUser, setSelectedUser] = useState({});
   const [message, setMessage] = useState("");
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
-  const onSubmit = async (data) => {
-    const response = await fetch("http://localhost:8000/api/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
+  const handleUserSelected = (user: any) => {
+    setSelectedUser(user);
+  };
+const onSubmit = async (data) => {
+  try {
+    const response = await axios.post(
+      "http://localhost:8000/api/message",
+      {
         message_send: data.message_send,
-        user: data.user,
-      }),
-    });
-    const jsonResponse = await response.json();
-    setMessage(jsonResponse.message);
+        id_user: selectedUser.id,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      }
+    );
+    setMessage(response.data.message);
     console.log(message);
     // Ajouter le nouveau message à l'état (state) de messages
-    setMessagesList([...messagesList, jsonResponse.message]);
-  };
+    setMessagesList([...messagesList, response.data.message]);
+  } catch (error) {
+    console.error(error);
+  }
+};
+
 
   return (
     <>
-
       {messagesList.map((message, index) => (
         <p key={index}>{message}</p>
       ))}
       <form onSubmit={handleSubmit(onSubmit)}>
+        <User onUserSelected={handleUserSelected}></User>
         <label>
           Message de test :
           <input {...register("message_send")} />

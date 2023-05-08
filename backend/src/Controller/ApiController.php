@@ -29,39 +29,6 @@ return $response;
 }
 
 
-
-
-#[Route('/api/messages', name: 'app_messages', methods: ['POST'])]
-#[IsGranted('ROLE_USER')]
-public function createMessage(Request $request, UserRepository $userRepository, MessageRepository $messageRepository): JsonResponse
-{
-    $content = json_decode($request->getContent(), true);
-
-    // Vérifie si tous les champs obligatoires sont remplis
-    if (!isset($content['user_id']) || !isset($content['message_send'])) {
-        return new JsonResponse(['error' => 'missing fields'], 400);
-    }
-    // Récupère le destinataire du message
-    $recipient = $userRepository->findOneBy(['user_id' => $content['user_id']]);
-
-
-    if (!$recipient) {
-        return new JsonResponse(['error' => 'recipient not found'], 404);
-    }
-
-    // Crée un nouveau message
-    $message = new Message();
-    $message->setUserId($recipient['user_id']);
-    //$message->setRecipient($recipient);
-    $message->setContent($content['message_send']);
-
-    $messageRepository->save($message, true);
-
-    return new JsonResponse(['message' => $content], 201);
-}
-
-
-
-
+ 
     
 }

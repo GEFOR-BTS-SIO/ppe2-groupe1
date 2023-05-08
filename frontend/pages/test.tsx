@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import User from "@/components/User";
+import Messagerie from "@/components/Messagerie";
 
 const Pagemess = () => {
   const [errorMessage, setErrorMessage] = useState("");
@@ -11,15 +12,19 @@ const Pagemess = () => {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const [selectedUser, setSelectedUser] = useState(""); // Ajout d'un state pour stocker l'utilisateur sélectionné
+  const [selectedUser, setSelectedUser] = useState({}); // Ajout d'un state pour stocker l'utilisateur sélectionné
 
+  // Fonction pour mettre à jour le state selectedUser
+  const handleUserSelected = (user) => {
+    setSelectedUser(user);
+  };
 
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/user",
+        "http://localhost:8000/api/messages",
         {
-          iduser: selectedUser.iduser, // Utilisation de l'email de l'utilisateur sélectionné
+          id_user: selectedUser.email, // Utilisation de l'email de l'utilisateur sélectionné
           message_send: data.message_send,
         },
         {
@@ -35,21 +40,16 @@ const Pagemess = () => {
     }
   };
 
-
-
   return (
     <div>
+      <Messagerie></Messagerie>
       <h1>New message</h1>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
           <label>Recipient:</label>
-          <User></User>
+          {/* Passer la fonction handleUserSelected au composant User */}
+          <User onUserSelected={handleUserSelected} />
           {errors.recipient && <span>Recipient is required</span>}
-        </div>
-        <div>
-          <label>Email:</label>
-          <input {...register("iduser", { required: true })} />
-          {errors.email && <span>Email is required</span>}
         </div>
         <div>
           <label>Message:</label>

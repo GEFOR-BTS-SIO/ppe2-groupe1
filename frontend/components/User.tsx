@@ -1,3 +1,4 @@
+// component/User.tsx
 import axios from "axios";
 import { useState, useEffect } from "react";
 
@@ -5,7 +6,7 @@ type UserProps = {
   onUserSelected: (user: any) => void;
 };
 
-export default function User({ onUserSelected }: UserProps) {
+const User = ({ onUserSelected }: UserProps) => {
   const [users, setUsers] = useState([]);
 
   useEffect(() => {
@@ -23,20 +24,23 @@ export default function User({ onUserSelected }: UserProps) {
   }, []);
 
   const handleUserChange = (event) => {
-    const selectedUser = users.find(
-      (user) => user.iduser === event.target.value
-    );
-    onUserSelected(selectedUser);
+    const selectedUserId = parseInt(event.target.value); // Récupérer l'ID de l'utilisateur sélectionné
+    const selectedUser = users.find((user) => user.id === selectedUserId); // Trouver l'utilisateur correspondant à l'ID sélectionné
+    if (selectedUser) {
+      onUserSelected(selectedUser);
+    }
   };
 
   return (
     <select onChange={handleUserChange}>
       <option>Select user</option>
       {users.map((user) => (
-        <option key={user.iduser} value={user.iduser}>
+        <option key={user.id} value={user.id}>
           {user.email}
         </option>
       ))}
     </select>
   );
-}
+};
+
+export default User;
