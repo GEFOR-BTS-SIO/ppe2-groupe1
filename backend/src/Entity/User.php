@@ -38,12 +38,12 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
     #[Ignore]
-    private Collection $user_id;
+    private Collection $messages;
     
 
     public function __construct()
     {
-        $this->user_id = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -135,6 +135,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->user_id;
     }
+
+    
 
     public function adduser_id(Message $user_id): self
     {

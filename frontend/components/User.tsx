@@ -2,12 +2,18 @@
 import axios from "axios";
 import { useState, useEffect } from "react";
 
+export type User = {
+  id: string;
+  email: string;
+}
+
+
 type UserProps = {
   onUserSelected: (user: any) => void;
 };
 
-const User = ({ onUserSelected }: UserProps) => {
-  const [users, setUsers] = useState([]);
+export const UserSelect = ({ onUserSelected }: UserProps) => {
+  const [users, setUsers] = useState<User[]>([]);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -23,8 +29,8 @@ const User = ({ onUserSelected }: UserProps) => {
     fetchUsers();
   }, []);
 
-  const handleUserChange = (event) => {
-    const selectedUserId = parseInt(event.target.value); // Récupérer l'ID de l'utilisateur sélectionné
+  const handleUserChange = (event: any) => {
+    const selectedUserId = (event.target.value); // Récupérer l'ID de l'utilisateur sélectionné
     const selectedUser = users.find((user) => user.id === selectedUserId); // Trouver l'utilisateur correspondant à l'ID sélectionné
     if (selectedUser) {
       onUserSelected(selectedUser);
@@ -43,4 +49,3 @@ const User = ({ onUserSelected }: UserProps) => {
   );
 };
 
-export default User;

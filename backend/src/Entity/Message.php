@@ -21,16 +21,16 @@ class Message
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $message_receved = null;
 
-    #[ORM\ManyToOne(inversedBy: 'iduser')]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'iduser')]
+    // private ?User $user = null;
 
-    #[ORM\Column(length: 255)]
-    #[Ignore]
-    private ?string $sender = null;
+    // #[ORM\Column(length: 255)]
+    // #[Ignore]
+    // private ?string $sender = null;
 
-    #[ORM\Column(length: 255)]
-    #[Ignore]
-    private ?string $recipient = null;
+    // #[ORM\Column(length: 255)]
+    // #[Ignore]
+    // private ?string $recipient = null;
 
     #[ORM\Column(length: 255)]
     #[Ignore]

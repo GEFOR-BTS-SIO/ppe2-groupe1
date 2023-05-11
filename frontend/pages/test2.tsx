@@ -1,25 +1,30 @@
 import { useForm } from "react-hook-form";
 import { useState } from "react";
-import User from "@/components/User";
-import axios from "axios";
 
+import axios from "axios";
+import { User, UserSelect } from "@/components/User";
+
+type MessagerieFormData = {
+  message_send : string
+}
 
 export default function Messagerie() {
-  const { register, handleSubmit, watch } = useForm();
-  const [selectedUser, setSelectedUser] = useState({});
+  const { register, handleSubmit, watch } = useForm<MessagerieFormData>();
+  const [selectedUser, setSelectedUser] = useState<User>();
   const [message, setMessage] = useState("");
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
   const handleUserSelected = (user: any) => {
     setSelectedUser(user);
   };
-const onSubmit = async (data) => {
+  console.log(selectedUser)
+const onSubmit = async (data:MessagerieFormData) => {
   try {
     const response = await axios.post(
       "http://localhost:8000/api/message",
       {
         message_send: data.message_send,
-        id_user: selectedUser.id,
+        id_user: selectedUser?.id,
       },
       {
         headers: {
@@ -44,7 +49,7 @@ const onSubmit = async (data) => {
         <p key={index}>{message}</p>
       ))}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <User onUserSelected={handleUserSelected}></User>
+        <UserSelect onUserSelected={handleUserSelected}></UserSelect>
         <label>
           Message de test :
           <input {...register("message_send")} />

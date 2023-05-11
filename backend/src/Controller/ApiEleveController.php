@@ -11,35 +11,5 @@ use Symfony\Component\HttpFoundation\Request;
 
 class ApiEleveController extends AbstractController
 {
-    #[Route('/api/message', name: 'app_api_eleve', methods:['POST'])]
- #[IsGranted('ROLE_USER')]
-    public function createMessage(Request $request, MessageRepository $messageRepository): Response
-    {
-
-        $data = json_decode($request->getContent(), true);
-        $message_send = $data['message_send'];
-        $user_id = $data['id_user'];
-
-
-        //$prenom = $request->getContent('prenom');
-
-        $message = new Message();
-        $message->setMessageSend($message_send);
-        $message->setUserId($user_id);
-
-        //$user->setNom($nom);
-
-        $messageRepository->save($message, true);
-        $response = ['message' => $message_send ,];
-
-        return new Response(json_encode($response), 200, [
-    'Content-Type' => 'application/json'
-]);
-
-
-        //return new Response('prenom créer', $user->getPrenom());
-        //return new Response($response);
-
-
-    }
+    
 }

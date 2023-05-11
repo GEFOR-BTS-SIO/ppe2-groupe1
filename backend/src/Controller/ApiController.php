@@ -12,6 +12,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Serializer;
 
 class ApiController extends AbstractController
 {
@@ -28,6 +29,31 @@ $response = new JsonResponse($jsonContent, 200, [
 return $response;
 }
 
+#[Route('/api/message', name: 'app_api_eleve', methods:['POST'])]
+ #[IsGranted('ROLE_USER')]
+    public function createMessage(Request $request, MessageRepository $messageRepository, SerializerInterface $serializer): Response
+{
+    $data = json_decode($request->getContent(), true);
+    $message_send = $data['message_send'];
+    $user_id = $data['id_user'];
+
+    // Utilisez le serializer pour désérialiser les données si nécessaire
+    // $object = $serializer->deserialize($request->getContent(), VotreClasse::class, 'json');
+
+    // Créez une nouvelle instance de l'entité Message
+    $message = new Message();
+    $message->setMessageSend($message_send);
+
+    
+
+    $message->setUserId($user);
+
+    // Enregistrez l'entité dans la base de données
+    $messageRepository->save($message);
+
+    // Retournez une réponse appropriée
+    return new Response('Message created', Response::HTTP_CREATED);
+}
 
  
     
