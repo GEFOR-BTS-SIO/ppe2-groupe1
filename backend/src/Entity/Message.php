@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
@@ -20,19 +21,23 @@ class Message
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $message_receved = null;
 
-    #[ORM\ManyToOne(inversedBy: 'iduser')]
-    private ?User $user = null;
+    // #[ORM\ManyToOne(inversedBy: 'iduser')]
+    // private ?User $user = null;
+
+    // #[ORM\Column(length: 255)]
+    // #[Ignore]
+    // private ?string $sender = null;
+
+    // #[ORM\Column(length: 255)]
+    // #[Ignore]
+    // private ?string $recipient = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $sender = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $recipient = null;
-
-    #[ORM\Column(length: 255)]
+    #[Ignore]
     private ?string $content = null;
 
     // changer username par user_id
+   
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
     private ?User $user_id = null;

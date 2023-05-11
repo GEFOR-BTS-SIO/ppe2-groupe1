@@ -7,8 +7,8 @@ export default function Messagerie() {
   const [message, setMessage] = useState("");
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
-  const onSubmit = async (data) => {
-    const response = await fetch("http://localhost:8000/apiuser", {
+  const onSubmit = async (data:any) => {
+    const response = await fetch("http://localhost:8000/api", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export default function Messagerie() {
       },
       body: JSON.stringify({
         message_send: data.message_send,
-        user: data.user,
+        user: data.user.id,
       }),
     });
     const jsonResponse = await response.json();

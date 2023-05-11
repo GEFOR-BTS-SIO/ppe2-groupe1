@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -35,11 +37,13 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $nom = null;
 
     #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
-    private Collection $iduser;
+    #[Ignore]
+    private Collection $messages;
+    
 
     public function __construct()
     {
-        $this->iduser = new ArrayCollection();
+        $this->messages = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,27 +131,29 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Message>
      */
-    public function getIduser(): Collection
+    public function getuser_id(): Collection
     {
-        return $this->iduser;
+        return $this->user_id;
     }
 
-    public function addIduser(Message $iduser): self
+    
+
+    public function adduser_id(Message $user_id): self
     {
-        if (!$this->iduser->contains($iduser)) {
-            $this->iduser->add($iduser);
-            $iduser->setUser($this);
+        if (!$this->user_id->contains($user_id)) {
+            $this->user_id->add($user_id);
+            $user_id->setUser($this);
         }
 
         return $this;
     }
 
-    public function removeIduser(Message $iduser): self
+    public function removeuser_id(Message $user_id): self
     {
-        if ($this->iduser->removeElement($iduser)) {
+        if ($this->user_id->removeElement($user_id)) {
             // set the owning side to null (unless already changed)
-            if ($iduser->getUser() === $this) {
-                $iduser->setUser(null);
+            if ($user_id->getUser() === $this) {
+                $user_id->setUser(null);
             }
         }
 

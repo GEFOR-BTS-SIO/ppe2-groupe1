@@ -1,4 +1,7 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+#PHM
+/android
+*.out
 
 # dependencies
 /node_modules

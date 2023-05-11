@@ -9,59 +9,52 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Serializer;
 
 class ApiController extends AbstractController
 {
-    // #[Route('/api', name: 'app_user_api', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_USER')]
-    // public function index(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
-    // {
-    //     $user = $this->getUser();
-    //     $email = $user->getUserIdentifier();
-
-    //     $response = new Response($serializerInterface->serialize([
-    //         'email' => $email,
-    //     ], 'json'), 200, [
-    //         'Content-Type' => 'application/json'
-    //     ]);
-
-    //     return $response;
-    // }
-
-#[Route('/api/messages', name: 'app_messages', methods: ['POST'])]
-#[IsGranted('ROLE_USER')]
-public function createMessage(Request $request, UserRepository $userRepository, MessageRepository $messageRepository): JsonResponse
+    #[Route('/api/users', name: 'app_user_api', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+public function index(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
 {
-    $content = json_decode($request->getContent(), true);
-
-    // Vérifie si tous les champs obligatoires sont remplis
-    if (!isset($content['user_id']) || !isset($content['message_send'])) {
-        return new JsonResponse(['error' => 'missing fields'], 400);
-    }
-    // Récupère le destinataire du message
-    $recipient = $userRepository->findOneBy(['user_id' => $content['user_id']]);
-
-
-    if (!$recipient) {
-        return new JsonResponse(['error' => 'recipient not found'], 404);
-    }
-
-    // Crée un nouveau message
-    $message = new Message();
-    $message->setUserId($recipient['user_id']);
-    //$message->setRecipient($recipient);
-    $message->setContent($content['message_send']);
-
-    $messageRepository->save($message, true);
-
-    return new JsonResponse(['message' => $content], 201);
+   $users = $userRepository->findAll();
+//$userArray = array_map(fn(User $user) => $user->toArray(), $user_id);
+$jsonContent = $serializerInterface->serialize($users, 'json');
+$response = new JsonResponse($jsonContent, 200, [
+    'Content-Type' => 'application/json'
+]);
+return $response;
 }
 
+#[Route('/api/message', name: 'app_api_eleve', methods:['POST'])]
+ #[IsGranted('ROLE_USER')]
+    public function createMessage(Request $request, MessageRepository $messageRepository, SerializerInterface $serializer): Response
+{
+    $data = json_decode($request->getContent(), true);
+    $message_send = $data['message_send'];
+    $user_id = $data['id_user'];
 
+    // Utilisez le serializer pour désérialiser les données si nécessaire
+    // $object = $serializer->deserialize($request->getContent(), VotreClasse::class, 'json');
 
+    // Créez une nouvelle instance de l'entité Message
+    $message = new Message();
+    $message->setMessageSend($message_send);
 
+    
+
+    $message->setUserId($user);
+
+    // Enregistrez l'entité dans la base de données
+    $messageRepository->save($message);
+
+    // Retournez une réponse appropriée
+    return new Response('Message created', Response::HTTP_CREATED);
+}
+
+ 
     
 }
