@@ -16,7 +16,7 @@ export default function Messagerie() {
       },
       body: JSON.stringify({
         message_send: data.message_send,
-        user: data.user.id,
+        id_user: selectedUserId ?? null,
       }),
     });
     const jsonResponse = await response.json();

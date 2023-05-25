@@ -128,35 +128,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection<int, Message>
-     */
-    public function getuser_id(): Collection
-    {
-        return $this->user_id;
-    }
 
-    
 
-    public function adduser_id(Message $user_id): self
-    {
-        if (!$this->user_id->contains($user_id)) {
-            $this->user_id->add($user_id);
-            $user_id->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeuser_id(Message $user_id): self
-    {
-        if ($this->user_id->removeElement($user_id)) {
-            // set the owning side to null (unless already changed)
-            if ($user_id->getUser() === $this) {
-                $user_id->setUser(null);
-            }
-        }
-
-        return $this;
-    }
 }
