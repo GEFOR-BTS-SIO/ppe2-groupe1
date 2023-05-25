@@ -21,7 +21,7 @@ export default function Messagerie() {
 
   const onSubmit = async (data:any) => {
     const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URLNEXT_PUBLIC_API_URL}/apimessage`,
+      `${process.env.NEXT_PUBLIC_API_URL}/apimessage`,
       {
         method: "POST",
         headers: {

@@ -36,14 +36,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
-    #[Ignore]
-    private Collection $messages;
-    
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Message::class)]
+    private Collection $messagesReceived;
+
+    #[ORM\OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
+    private Collection $messagesSent;
 
     public function __construct()
     {
-        $this->messages = new ArrayCollection();
+        $this->messagesReceived = new ArrayCollection();
+        $this->messagesSent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -124,6 +126,66 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setNom(?string $nom): self
     {
         $this->nom = $nom;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesReceived(): Collection
+    {
+        return $this->messagesReceived;
+    }
+
+    public function addMessagesReceived(Message $messagesReceived): self
+    {
+        if (!$this->messagesReceived->contains($messagesReceived)) {
+            $this->messagesReceived->add($messagesReceived);
+            $messagesReceived->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesReceived(Message $messagesReceived): self
+    {
+        if ($this->messagesReceived->removeElement($messagesReceived)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesReceived->getReceiver() === $this) {
+                $messagesReceived->setReceiver(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesSent(): Collection
+    {
+        return $this->messagesSent;
+    }
+
+    public function addMessagesSent(Message $messagesSent): self
+    {
+        if (!$this->messagesSent->contains($messagesSent)) {
+            $this->messagesSent->add($messagesSent);
+            $messagesSent->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesSent(Message $messagesSent): self
+    {
+        if ($this->messagesSent->removeElement($messagesSent)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesSent->getSender() === $this) {
+                $messagesSent->setSender(null);
+            }
+        }
 
         return $this;
     }
