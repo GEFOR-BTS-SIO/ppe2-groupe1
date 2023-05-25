@@ -11,7 +11,7 @@ export default function MessageSends() {
 
 
   const { get } = useApi => {
-  const response = await fetch("http://localhost:8000/api", {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',

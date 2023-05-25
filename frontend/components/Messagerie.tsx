@@ -8,7 +8,7 @@ export default function Messagerie() {
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
   const onSubmit = async (data) => {
-    const response = await fetch("http://localhost:8000/apiuser", {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}apiuser`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

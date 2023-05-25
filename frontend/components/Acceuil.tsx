@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query';
 export default function Acceuil() {
   
   const { isLoading, error, data } = useQuery(["api"], () => {
-    fetch("http://localhost:8000/api", {
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/api`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },

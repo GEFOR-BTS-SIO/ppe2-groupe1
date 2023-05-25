@@ -22,7 +22,7 @@ const Pagemess = () => {
   const onSubmit = async (data) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/messages",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/messages`,
         {
           user_id: selectedUser.user_id, // Utilisation de l'email de l'utilisateur sélectionné
           message_send: data.message_send,
