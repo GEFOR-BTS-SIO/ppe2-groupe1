@@ -1,6 +1,6 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 #PHM
-/android
+android
 *.out
 
 # dependencies
@@ -14,6 +14,8 @@
 # next.js
 /.next/
 /out/
+
+ios
 
 # production
 /build
