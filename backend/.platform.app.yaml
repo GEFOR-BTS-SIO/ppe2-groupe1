@@ -39,7 +39,7 @@ mounts:
     
 
 relationships:
-    database: "database:oracle-mysql"
+    database: "database:mysql"
     
 hooks:
     build: |
