@@ -17,12 +17,15 @@ export const UserSelect = ({ onUserSelected }: UserProps) => {
 
   useEffect(() => {
     const fetchUsers = async () => {
-      const response = await axios.get("http://localhost:8000/api/users", {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const response = await axios.get(
+        `${process.env.NEXT_PUBLIC_API_URL}/api/users`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
       const parsedResponse = JSON.parse(response.data); // Conversion de la réponse en objet JS
       setUsers(parsedResponse);
     };

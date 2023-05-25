@@ -17,7 +17,7 @@ const Login = () => {
   const onSubmit = async (data:any) => {
     try {
       const response = await axios.post(
-        "http://localhost:8000/api/login_check",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/login_check`,
         {
           username: data.username,
           password: data.password,

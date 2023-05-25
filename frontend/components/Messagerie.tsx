@@ -1,6 +1,7 @@
 // component/Messagerie.tsx
 import { useForm } from "react-hook-form";
 import { useState } from "react";
+import axios from "axios";
 
 export default function Messagerie() {
   const { register, handleSubmit, watch } = useForm();
@@ -8,7 +9,7 @@ export default function Messagerie() {
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
   const onSubmit = async (data:any) => {
-    const response = await fetch("http://localhost:8000/api", {
+    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/api`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

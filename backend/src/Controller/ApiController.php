@@ -29,40 +29,40 @@ class ApiController extends AbstractController
         return $response;
     }
 
- #[Route('apimessage', name: 'app_api_eleve', methods:['POST', 'GET'])]
-#[IsGranted('ROLE_USER')]
-public function createMessage(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializer): Response
-{
-    $data = json_decode($request->getContent(), true);
-    $message_send = $data['message_send'];
-    $user_id = $data['id_user'];
+//  #[Route('apimessage', name: 'app_api_eleve', methods:['POST', 'GET'])]
+// #[IsGranted('ROLE_USER')]
+// public function createMessage(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializer): Response
+// {
+//     $data = json_decode($request->getContent(), true);
+//     $message_send = $data['message_send'];
+//     $user_id = $data['id_user'];
 
-    // Récupérer l'utilisateur correspondant à l'ID fourni
-    $user = $userRepository->find($user_id);
+//     // Récupérer l'utilisateur correspondant à l'ID fourni
+//     $user = $userRepository->find($user_id);
 
-    // Vérifier si l'utilisateur existe
-    if (!$user) {
-        throw new \Exception('User not found');
-    }
+//     // Vérifier si l'utilisateur existe
+//     if (!$user) {
+//         throw new \Exception('User not found');
+//     }
 
-    // Vérifier si le champ "content" est renseigné
-    if (!$message_send) {
-        throw new \Exception('Message content cannot be empty');
-    }
+//     // Vérifier si le champ "content" est renseigné
+//     if (!$message_send) {
+//         throw new \Exception('Message content cannot be empty');
+//     }
 
-    // Créer une nouvelle instance de l'entité Message
-    $message = new Message();
-    $message->setContent($message_send);
-    $message->setUser($user);
+//     // Créer une nouvelle instance de l'entité Message
+//     $message = new Message();
+//     $message->setContent($message_send);
+//     $message->setUser($user);
 
-    // Enregistrer l'entité dans la base de données
-    $messageRepository->save($message);
+//     // Enregistrer l'entité dans la base de données
+//     $messageRepository->save($message);
 
-    $response = "ca passe";
+//     $response = "ca passe";
 
-    return new Response(json_encode($response), 200, [
-        'Content-Type' => 'application/json'
-    ]);
-}
+//     return new Response(json_encode($response), 200, [
+//         'Content-Type' => 'application/json'
+//     ]);
+// }
 
 }

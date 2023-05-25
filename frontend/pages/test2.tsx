@@ -20,17 +20,20 @@ export default function Messagerie() {
   };
 
   const onSubmit = async (data:any) => {
-    const response = await fetch("http://localhost:8000/apimessage", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${localStorage.getItem("token")}`,
-      },
-      body: JSON.stringify({
-        message_send: data.message_send,
-        id_user: selectedUserId ?? null,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_API_URLNEXT_PUBLIC_API_URL}/apimessage`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          message_send: data.message_send,
+          id_user: selectedUserId ?? null,
+        }),
+      }
+    );
 
 
     const jsonResponse = await response.json();
