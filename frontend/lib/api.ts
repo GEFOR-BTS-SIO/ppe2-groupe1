@@ -12,7 +12,7 @@ export const useApi = () => {
       },
     });
     return response.data;
-  };
+  }; 
 
   const post = async <T>(url: string, body: any): Promise<T> => {
     const response = await axios.post(url, body, {

@@ -18,43 +18,51 @@ class ApiController extends AbstractController
 {
     #[Route('/api/users', name: 'app_user_api', methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_USER')]
-public function index(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
-{
-   $users = $userRepository->findAll();
-//$userArray = array_map(fn(User $user) => $user->toArray(), $user_id);
-$jsonContent = $serializerInterface->serialize($users, 'json');
-$response = new JsonResponse($jsonContent, 200, [
-    'Content-Type' => 'application/json'
-]);
-return $response;
-}
+    public function index(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
+    {
+        $users = $userRepository->findAll();
+        //$userArray = array_map(fn(User $user) => $user->toArray(), $user_id);
+        $jsonContent = $serializerInterface->serialize($users, 'json');
+        $response = new JsonResponse($jsonContent, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+        return $response;
+    }
 
-#[Route('/api/message', name: 'app_api_eleve', methods:['POST'])]
- #[IsGranted('ROLE_USER')]
-    public function createMessage(Request $request, MessageRepository $messageRepository, SerializerInterface $serializer): Response
+ #[Route('apimessage', name: 'app_api_eleve', methods:['POST', 'GET'])]
+#[IsGranted('ROLE_USER')]
+public function createMessage(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializer): Response
 {
     $data = json_decode($request->getContent(), true);
     $message_send = $data['message_send'];
     $user_id = $data['id_user'];
 
-    // Utilisez le serializer pour désérialiser les données si nécessaire
-    // $object = $serializer->deserialize($request->getContent(), VotreClasse::class, 'json');
+    // Récupérer l'utilisateur correspondant à l'ID fourni
+    $user = $userRepository->find($user_id);
 
-    // Créez une nouvelle instance de l'entité Message
+    // Vérifier si l'utilisateur existe
+    if (!$user) {
+        throw new \Exception('User not found');
+    }
+
+    // Vérifier si le champ "content" est renseigné
+    if (!$message_send) {
+        throw new \Exception('Message content cannot be empty');
+    }
+
+    // Créer une nouvelle instance de l'entité Message
     $message = new Message();
-    $message->setMessageSend($message_send);
+    $message->setContent($message_send);
+    $message->setUser($user);
 
-    
-
-    $message->setUserId($user);
-
-    // Enregistrez l'entité dans la base de données
+    // Enregistrer l'entité dans la base de données
     $messageRepository->save($message);
 
-    // Retournez une réponse appropriée
-    return new Response('Message created', Response::HTTP_CREATED);
+    $response = "ca passe";
+
+    return new Response(json_encode($response), 200, [
+        'Content-Type' => 'application/json'
+    ]);
 }
 
- 
-    
 }

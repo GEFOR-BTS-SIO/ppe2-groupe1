@@ -10,37 +10,34 @@ type MessagerieFormData = {
 
 export default function Messagerie() {
   const { register, handleSubmit, watch } = useForm<MessagerieFormData>();
-  const [selectedUser, setSelectedUser] = useState<User>();
+  const [selectedUserId, setSelectedUserId] = useState<number>();
   const [message, setMessage] = useState("");
   const [messagesList, setMessagesList] = useState<string[]>([]); // Etat (state) de messages
 
-  const handleUserSelected = (user: any) => {
-    setSelectedUser(user);
+  const handleUserSelected = (userId: any) => {
+    console.log(userId)
+    setSelectedUserId(userId);
   };
-  console.log(selectedUser)
-const onSubmit = async (data:MessagerieFormData) => {
-  try {
-    const response = await axios.post(
-      "http://localhost:8000/api/message",
-      {
-        message_send: data.message_send,
-        id_user: selectedUser?.id,
+
+  const onSubmit = async (data:any) => {
+    const response = await fetch("http://localhost:8000/apimessage", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
-      {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      }
-    );
-    setMessage(response.data.message);
-    console.log(message);
+      body: JSON.stringify({
+        message_send: data.message_send,
+        id_user: selectedUserId ?? null,
+      }),
+    });
+
+
+    const jsonResponse = await response.json();
+    setMessage(jsonResponse.message);
     // Ajouter le nouveau message à l'état (state) de messages
-    setMessagesList([...messagesList, response.data.message]);
-  } catch (error) {
-    console.error(error);
-  }
-};
+    setMessagesList([...messagesList, jsonResponse.message]);
+  };
 
 
   return (

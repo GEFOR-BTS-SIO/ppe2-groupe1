@@ -31,10 +31,7 @@ export const UserSelect = ({ onUserSelected }: UserProps) => {
 
   const handleUserChange = (event: any) => {
     const selectedUserId = (event.target.value); // Récupérer l'ID de l'utilisateur sélectionné
-    const selectedUser = users.find((user) => user.id === selectedUserId); // Trouver l'utilisateur correspondant à l'ID sélectionné
-    if (selectedUser) {
-      onUserSelected(selectedUser);
-    }
+      onUserSelected(selectedUserId);
   };
 
   return (

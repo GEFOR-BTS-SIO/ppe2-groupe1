@@ -40,7 +40,7 @@ class Message
    
     #[ORM\ManyToOne(targetEntity: User::class)]
     #[ORM\JoinColumn(name: "user_id", referencedColumnName: "id")]
-    private ?User $user_id = null;
+    private ?User $user = null;
 
 
     public function getId(): ?int
