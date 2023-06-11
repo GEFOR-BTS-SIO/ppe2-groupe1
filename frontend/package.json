@@ -6,9 +6,13 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "static": "next build && next export"
   },
   "dependencies": {
+    "@capacitor/android": "^5.0.3",
+    "@capacitor/core": "^5.0.3",
+    "@capacitor/ios": "^5.0.3",
     "@tanstack/react-query": "^4.29.5",
     "@types/node": "18.16.3",
     "@types/react": "18.2.0",
@@ -20,11 +24,21 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-hook-form": "^7.43.9",
+<<<<<<< HEAD
     "react-jwt": "^1.1.8",
     "react-query": "^3.39.3",
     "typescript": "5.0.4"
   },
   "devDependencies": {
+=======
+    "react-jwt-auth": "^0.5.1",
+    "react-router-dom": "^6.10.0",
+    "typescript": "5.0.4",
+    "websocket": "^1.0.34"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^5.0.3",
+>>>>>>> e1e7281a598d67085cd8bbc4d9ee0124bb9d6b16
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.23",
     "tailwindcss": "^3.3.2"

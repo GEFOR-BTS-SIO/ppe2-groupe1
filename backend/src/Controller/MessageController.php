@@ -2,86 +2,55 @@
 
 namespace App\Controller;
 
-use App\Entity\User;
-use App\Form\UserType;
+use App\Entity\Message;
+use App\Repository\MessageRepository;app://resources/notifications.html#
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Serializer;
-use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-#[Route('/message')]
 class MessageController extends AbstractController
 {
-    #[Route('/', name: 'app_message_index', methods: ['GET'])]
-    public function index(UserRepository $userRepository): Response
+    #[Route('/apimessage', name: 'app_api_eleve', methods:['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function index(Request $request, UserRepository $userRepository, MessageRepository $messageRepository): Response
     {
-        return $this->render('message/index.html.twig', [
-            'users' => $userRepository->findAll(),
-        ]);
-    }
+        $data = json_decode($request->getContent(), true);
+        $content = $data['message_send'];
+        $receiverId = $data['id_user'];
 
-    #[Route('/new', name: 'app_message_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, UserRepository $userRepository): Response
-    {
-        $user = new User();
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
+        // Récupérer l'utilisateur correspondant à l'ID fourni
+        $receiver = $userRepository->find($receiverId);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->save($user, true);
-
-            return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
+        // Vérifier si l'utilisateur existe
+        if (!$receiver) {
+            throw new \Exception('User not found');
         }
 
-        return $this->render('message/new.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
+        // Vérifier si le champ "content" est renseigné
+        if (!$content) {
+            throw new \Exception('Message content cannot be empty');
+        }
 
-    #[Route('/{id}', name: 'app_message_show', methods: ['GET'])]
-    public function show(Request $request, UserRepository $userRepository, SerializerInterface $serializer): Response
-    {
-        $user = $this->getUser();
-  
+        // Créer une nouvelle instance de l'entité Message
+        $message = new Message();
+        $message->setContent($content);
 
-        $response = new Response($serializer->serialize([
-            'email' => $email,
-        ], 'json'), 200, [
+        $sender = $this->getUser();
+        $message->setSender($sender);
+        $message->setReceiver($receiver);
+
+
+        // Enregistrer l'entité dans la base de données
+        $messageRepository->save($message, true);
+
+
+        return new Response(json_encode($message), 200, [
             'Content-Type' => 'application/json'
         ]);
-
-        return $response;
-    }
-
-    #[Route('/{id}/edit', name: 'app_message_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, User $user, UserRepository $userRepository): Response
-    {
-        $form = $this->createForm(UserType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $userRepository->save($user, true);
-
-            return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('message/edit.html.twig', [
-            'user' => $user,
-            'form' => $form,
-        ]);
-    }
-
-    #[Route('/{id}', name: 'app_message_delete', methods: ['POST'])]
-    public function delete(Request $request, User $user, UserRepository $userRepository): Response
-    {
-        if ($this->isCsrfTokenValid('delete'.$user->getId(), $request->request->get('_token'))) {
-            $userRepository->remove($user, true);
-        }
-
-        return $this->redirectToRoute('app_message_index', [], Response::HTTP_SEE_OTHER);
     }
 }

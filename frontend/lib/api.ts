@@ -1,45 +1,27 @@
-const getToken = (): string | null => localStorage.getItem('token');
+import axios from "axios";
 
-interface Options {
-  method?: string;
-  headers?: any;
-  body?: any;
-}
+export const useApi = () => {
+  const userToken =
+    typeof localStorage !== "undefined"
+ ? localStorage.getItem("token") : "";
 
-const get = async (url: string): Promise<any> => {
-  const options: Options = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
+  const get = async <T>(url: string): Promise<T> => {
+    const response = await axios.get(url, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
+  }; 
+
+  const post = async <T>(url: string, body: any): Promise<T> => {
+    const response = await axios.post(url, body, {
+      headers: {
+        Authorization: `Bearer ${userToken}`,
+      },
+    });
+    return response.data;
   };
 
-  const response = await fetch(`http://localhost:8000/api/login_check`, options);
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error);
-  }
-
-  return response.json();
+  return { get, post };
 };
-
-const getUserInfo = async (): Promise<any> => {
-  const options: Options = {
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${getToken()}`,
-    },
-  };
-
-  const response = await fetch(`${process.env.REACT_APP_API_URL}/user`, options);
-
-  if (!response.ok) {
-    const error = await response.text();
-    throw new Error(error);
-  }
-
-  return response.json();
-};
-
-export { get, getUserInfo};

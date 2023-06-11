@@ -9,6 +9,8 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -34,12 +36,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 255, nullable: true)]
     private ?string $nom = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
-    private Collection $iduser;
+    #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Message::class)]
+    private Collection $messagesReceived;
+
+    #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
+    private Collection $messagesSent;
 
     public function __construct()
     {
-        $this->iduser = new ArrayCollection();
+        $this->messagesReceived = new ArrayCollection();
+        $this->messagesSent = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -127,30 +135,63 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Message>
      */
-    public function getIduser(): Collection
+    public function getMessagesReceived(): Collection
     {
-        return $this->iduser;
+        return $this->messagesReceived;
     }
 
-    public function addIduser(Message $iduser): self
+    public function addMessagesReceived(Message $messagesReceived): self
     {
-        if (!$this->iduser->contains($iduser)) {
-            $this->iduser->add($iduser);
-            $iduser->setUser($this);
+        if (!$this->messagesReceived->contains($messagesReceived)) {
+            $this->messagesReceived->add($messagesReceived);
+            $messagesReceived->setReceiver($this);
         }
 
         return $this;
     }
 
-    public function removeIduser(Message $iduser): self
+    public function removeMessagesReceived(Message $messagesReceived): self
     {
-        if ($this->iduser->removeElement($iduser)) {
+        if ($this->messagesReceived->removeElement($messagesReceived)) {
             // set the owning side to null (unless already changed)
-            if ($iduser->getUser() === $this) {
-                $iduser->setUser(null);
+            if ($messagesReceived->getReceiver() === $this) {
+                $messagesReceived->setReceiver(null);
             }
         }
 
         return $this;
     }
+
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesSent(): Collection
+    {
+        return $this->messagesSent;
+    }
+
+    public function addMessagesSent(Message $messagesSent): self
+    {
+        if (!$this->messagesSent->contains($messagesSent)) {
+            $this->messagesSent->add($messagesSent);
+            $messagesSent->setSender($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesSent(Message $messagesSent): self
+    {
+        if ($this->messagesSent->removeElement($messagesSent)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesSent->getSender() === $this) {
+                $messagesSent->setSender(null);
+            }
+        }
+
+        return $this;
+    }
+
+
+
 }

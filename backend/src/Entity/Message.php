@@ -4,66 +4,67 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $message_send = null;
+    #[Ignore]
+    private ?string $content = null;
 
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $message_receved = null;
+    #[ORM\ManyToOne(inversedBy: 'messagesReceived')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $receiver = null;
 
-    #[ORM\ManyToOne(inversedBy: 'iduser')]
-    private ?User $user = null;
-
+    #[ORM\ManyToOne(inversedBy: 'messagesSent')]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?User $sender = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMessageSend(): ?string
+    public function getContent(): ?string
     {
-        return $this->message_send;
+        return $this->content;
     }
 
-    public function setMessageSend(string $message_send): self
+    public function setContent(string $content): self
     {
-        $this->message_send = $message_send;
+        $this->content = $content;
 
         return $this;
     }
 
-    public function getMessageReceved(): ?string
+    public function getReceiver(): ?User
     {
-        return $this->message_receved;
+        return $this->receiver;
     }
 
-    public function setMessageReceved(?string $message_receved): self
+    public function setReceiver(?User $receiver): self
     {
-        $this->message_receved = $message_receved;
+        $this->receiver = $receiver;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getSender(): ?User
     {
-        return $this->user;
+        return $this->sender;
     }
 
-    public function setUser(?User $user): self
+    public function setSender(?User $sender): self
     {
-        $this->user = $user;
+        $this->sender = $sender;
 
         return $this;
     }
-
-
-
 }
