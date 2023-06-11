@@ -8,9 +8,9 @@ export default function Accueil() {
       try {
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api`, {
           headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('token')}`
-          }
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
         });
 
         if (!response.ok) {

@@ -3,126 +3,54 @@
 namespace App\Controller;
 
 use App\Entity\Message;
-use App\Repository\MessageRepository;
+use App\Repository\MessageRepository;app://resources/notifications.html#
+use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageController extends AbstractController
 {
-    #[Route('/messages/{id}', name: 'app_message_show', methods: ['GET'])]
-    public function show(Message $message): JsonResponse
+    #[Route('/apimessage', name: 'app_api_eleve', methods:['POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function index(Request $request, UserRepository $userRepository, MessageRepository $messageRepository): Response
     {
-        // Serializing the Message entity using the serializer component
-        $serializer = $this->getUser('serializer');
-        $json = $serializer->serialize($message, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
+        $data = json_decode($request->getContent(), true);
+        $content = $data['message_send'];
+        $receiverId = $data['id_user'];
 
-        return new JsonResponse($json, 200, [], true);
-    }
+        // Récupérer l'utilisateur correspondant à l'ID fourni
+        $receiver = $userRepository->find($receiverId);
 
-    #[Route('/messages', name: 'message_index', methods: ['GET'])]
-    // public function index(MessageRepository $messageRepository): JsonResponse
-    // {
-    //     // Getting all messages
-    //     $messages = $messageRepository->findAll();
+        // Vérifier si l'utilisateur existe
+        if (!$receiver) {
+            throw new \Exception('User not found');
+        }
 
-    //     // Serializing the messages using the serializer component
-    //     $serializer = $this->get('serializer');
-    //     $json = $serializer->serialize($messages, 'json', [
-    //         'circular_reference_handler' => function ($object) {
-    //             return $object->getId();
-    //         }
-    //     ]);
+        // Vérifier si le champ "content" est renseigné
+        if (!$content) {
+            throw new \Exception('Message content cannot be empty');
+        }
 
-    //     return new JsonResponse($json, 200, [], true);
-    // }
-     public function index(Request $request, MessageRepository $messageRepository): Response
-    {
-    $data = json_decode($request->getContent(), true);
-
-
-    $message_send = $data['message_send'];
-
-    //$prenom = $request->getContent('prenom');
-
-    $message = new Message();
-    $message->setMessageSend($message_send);
-
-
-    //$user->setNom($nom);
-
-    $messageRepository->save($message, true);
-
-    $response = ['message' => $message_send ];
-
-    return new Response(json_encode($response), 200, [
-    'Content-Type' => 'application/json'
-]);
-
-}
-
-    #[Route('/messages', name: 'message_create', methods: ['POST'])]
-    public function create(Request $request): JsonResponse
-    {
-        // Creating a new message
+        // Créer une nouvelle instance de l'entité Message
         $message = new Message();
+        $message->setContent($content);
 
-        // Retrieving the authenticated user
-        $user = $this->getUser();
-        if (!$user) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour créer un message');
-        }
+        $sender = $this->getUser();
+        $message->setSender($sender);
+        $message->setReceiver($receiver);
 
-        // Setting the sender of the message to the authenticated user
-        $message->setSender($user);
 
-        // Setting the content of the message
-        $content = $request->getContent();
-        $data = json_decode($content, true);
-        $message->setContent($data['content']);
+        // Enregistrer l'entité dans la base de données
+        $messageRepository->save($message, true);
 
-        // Persisting the message to the database
-        $entityManager = $this->getDoctrine()->getManager();
-        $entityManager->persist($message);
-        $entityManager->flush();
 
-        // Serializing the created message using the serializer component
-        $serializer = $this->get('serializer');
-        $json = $serializer->serialize($message, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
+        return new Response(json_encode($message), 200, [
+            'Content-Type' => 'application/json'
         ]);
-
-        return new JsonResponse($json, 201, [], true);
-    }
-
-    #[Route('/messages/user', name: 'message_user', methods: ['GET'])]
-    public function userMessages(MessageRepository $messageRepository): JsonResponse
-    {
-        // Retrieving the authenticated user
-        $user = $this->getUser();
-        if (!$user) {
-            throw $this->createAccessDeniedException('Vous devez être connecté pour accéder à cette ressource');
-        }
-
-        // Getting all messages for the authenticated user
-        $messages = $messageRepository->findBy(['sender' => $user]);
-
-        // Serializing the messages using the serializer component
-        $serializer = $this->get('serializer');
-        $json = $serializer->serialize($messages, 'json', [
-            'circular_reference_handler' => function ($object) {
-                return $object->getId();
-            }
-        ]);
-
-        return new JsonResponse($json, 200, [], true);
     }
 }

@@ -14,7 +14,11 @@ const Login = () => {
   } = useForm();
   const router = useRouter();
 
+<<<<<<< HEAD
   const onSubmit = async (data) => {
+=======
+  const onSubmit = async (data:any) => {
+>>>>>>> main
     try {
       const response = await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/api/login_check`,
@@ -29,8 +33,13 @@ const Login = () => {
       setIsAuthenticated(true);
       setToken(response.data.token);
 
+<<<<<<< HEAD
       router.push("/pagemessage");
     } catch (error) {
+=======
+      router.push("/test2");
+    } catch (error:any) {
+>>>>>>> main
       setErrorMessage(error.message);
     }
   };

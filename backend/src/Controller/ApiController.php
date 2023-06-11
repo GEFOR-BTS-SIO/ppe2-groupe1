@@ -9,59 +9,60 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Messenger\Transport\Serialization\SerializerInterface;
+use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use Symfony\Component\Serializer\Serializer;
 
 class ApiController extends AbstractController
 {
-    // #[Route('/api', name: 'app_user_api', methods: ['GET', 'POST'])]
-    // #[IsGranted('ROLE_USER')]
-    // public function index(Request $request, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
-    // {
-    //     $user = $this->getUser();
-    //     $email = $user->getUserIdentifier();
-
-    //     $response = new Response($serializerInterface->serialize([
-    //         'email' => $email,
-    //     ], 'json'), 200, [
-    //         'Content-Type' => 'application/json'
-    //     ]);
-
-    //     return $response;
-    // }
-
-#[Route('/api/messages', name: 'app_messages', methods: ['POST'])]
-#[IsGranted('ROLE_USER')]
-public function createMessage(Request $request, UserRepository $userRepository, MessageRepository $messageRepository): JsonResponse
-{
-    $content = json_decode($request->getContent(), true);
-
-    // Vérifie si tous les champs obligatoires sont remplis
-    if (!isset($content['user_id']) || !isset($content['message_send'])) {
-        return new JsonResponse(['error' => 'missing fields'], 400);
-    }
-    // Récupère le destinataire du message
-    $recipient = $userRepository->findOneBy(['user_id' => $content['user_id']]);
-
-
-    if (!$recipient) {
-        return new JsonResponse(['error' => 'recipient not found'], 404);
+    #[Route('/api/users', name: 'app_user_api', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function index(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
+    {
+        $users = $userRepository->findAll();
+        //$userArray = array_map(fn(User $user) => $user->toArray(), $user_id);
+        $jsonContent = $serializerInterface->serialize($users, 'json');
+        $response = new JsonResponse($jsonContent, 200, [
+            'Content-Type' => 'application/json'
+        ]);
+        return $response;
     }
 
-    // Crée un nouveau message
-    $message = new Message();
-    $message->setUserId($recipient['user_id']);
-    //$message->setRecipient($recipient);
-    $message->setContent($content['message_send']);
+//  #[Route('apimessage', name: 'app_api_eleve', methods:['POST', 'GET'])]
+// #[IsGranted('ROLE_USER')]
+// public function createMessage(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializer): Response
+// {
+//     $data = json_decode($request->getContent(), true);
+//     $message_send = $data['message_send'];
+//     $user_id = $data['id_user'];
 
-    $messageRepository->save($message, true);
+//     // Récupérer l'utilisateur correspondant à l'ID fourni
+//     $user = $userRepository->find($user_id);
 
-    return new JsonResponse(['message' => $content], 201);
-}
+//     // Vérifier si l'utilisateur existe
+//     if (!$user) {
+//         throw new \Exception('User not found');
+//     }
 
+//     // Vérifier si le champ "content" est renseigné
+//     if (!$message_send) {
+//         throw new \Exception('Message content cannot be empty');
+//     }
 
+//     // Créer une nouvelle instance de l'entité Message
+//     $message = new Message();
+//     $message->setContent($message_send);
+//     $message->setUser($user);
 
+//     // Enregistrer l'entité dans la base de données
+//     $messageRepository->save($message);
 
-    
+//     $response = "ca passe";
+
+//     return new Response(json_encode($response), 200, [
+//         'Content-Type' => 'application/json'
+//     ]);
+// }
+
 }
