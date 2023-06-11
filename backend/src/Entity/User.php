@@ -9,6 +9,7 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
@@ -16,6 +17,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
+    
     #[ORM\Column]
     private ?int $id = null;
 
@@ -30,17 +32,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column]
     private ?string $password = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $nom = null;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Message::class)]
-    private Collection $iduser;
+    #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'receiver', targetEntity: Message::class)]
+    private Collection $messagesReceived;
+    #[Ignore]
+    #[ORM\OneToMany(mappedBy: 'sender', targetEntity: Message::class)]
+    private Collection $messagesSender;
 
     public function __construct()
     {
-        $this->iduser = new ArrayCollection();
+        $this->messagesReceived = new ArrayCollection();
+        $this->messagesSender = new ArrayCollection();
     }
+
+  
 
     public function getId(): ?int
     {
@@ -112,14 +117,32 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getNom(): ?string
+    /**
+     * @return Collection<int, Message>
+     */
+    public function getMessagesReceived(): Collection
     {
-        return $this->nom;
+        return $this->messagesReceived;
     }
 
-    public function setNom(?string $nom): self
+    public function addMessagesReceived(Message $messagesReceived): static
     {
-        $this->nom = $nom;
+        if (!$this->messagesReceived->contains($messagesReceived)) {
+            $this->messagesReceived->add($messagesReceived);
+            $messagesReceived->setReceiver($this);
+        }
+
+        return $this;
+    }
+
+    public function removeMessagesReceived(Message $messagesReceived): static
+    {
+        if ($this->messagesReceived->removeElement($messagesReceived)) {
+            // set the owning side to null (unless already changed)
+            if ($messagesReceived->getReceiver() === $this) {
+                $messagesReceived->setReceiver(null);
+            }
+        }
 
         return $this;
     }
@@ -127,30 +150,34 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * @return Collection<int, Message>
      */
-    public function getIduser(): Collection
+    public function getMessagesSender(): Collection
     {
-        return $this->iduser;
+        return $this->messagesSender;
     }
 
-    public function addIduser(Message $iduser): self
+    public function addMessagesSender(Message $messagesSender): static
     {
-        if (!$this->iduser->contains($iduser)) {
-            $this->iduser->add($iduser);
-            $iduser->setUser($this);
+        if (!$this->messagesSender->contains($messagesSender)) {
+            $this->messagesSender->add($messagesSender);
+            $messagesSender->setSender($this);
         }
 
         return $this;
     }
 
-    public function removeIduser(Message $iduser): self
+    public function removeMessagesSender(Message $messagesSender): static
     {
-        if ($this->iduser->removeElement($iduser)) {
+        if ($this->messagesSender->removeElement($messagesSender)) {
             // set the owning side to null (unless already changed)
-            if ($iduser->getUser() === $this) {
-                $iduser->setUser(null);
+            if ($messagesSender->getSender() === $this) {
+                $messagesSender->setSender(null);
             }
         }
 
         return $this;
     }
+    
+    
+
+    
 }

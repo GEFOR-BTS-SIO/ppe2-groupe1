@@ -27,7 +27,7 @@
             "repo": "github.com/symfony/recipes",
             "branch": "main",
             "version": "2.8",
-            "ref": "6b43b7b6ff6bf2551f2933ebeb66721fa3db8fbc"
+            "ref": "67961f095352f829a24c035639b3d0d3378ffbf2"
         },
         "files": [
             "./config/packages/doctrine.yaml",
@@ -86,18 +86,6 @@
             "./tests/bootstrap.php"
         ]
     },
-    "sensio/framework-extra-bundle": {
-        "version": "6.2",
-        "recipe": {
-            "repo": "github.com/symfony/recipes",
-            "branch": "main",
-            "version": "5.2",
-            "ref": "fb7e19da7f013d0d422fa9bce16f5c510e27609b"
-        },
-        "files": [
-            "./config/packages/sensio_framework_extra.yaml"
-        ]
-    },
     "symfony/console": {
         "version": "6.2",
         "recipe": {
@@ -123,7 +111,7 @@
         ]
     },
     "symfony/flex": {
-        "version": "2.2",
+        "version": "2.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -211,7 +199,7 @@
         ]
     },
     "symfony/phpunit-bridge": {
-        "version": "6.2",
+        "version": "6.3",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -302,7 +290,7 @@
         ]
     },
     "symfony/webapp-pack": {
-        "version": "1.1",
+        "version": "1.2",
         "recipe": {
             "repo": "github.com/symfony/recipes",
             "branch": "main",
@@ -313,7 +301,23 @@
             "./config/packages/messenger.yaml"
         ]
     },
+    "symfony/webpack-encore-bundle": {
+        "version": "2.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "2.0",
+            "ref": "13ebe04e25085e2ff0bcb0f9218b561d8b5089f3"
+        },
+        "files": [
+            "./assets/app.js",
+            "./assets/styles/app.css",
+            "./config/packages/webpack_encore.yaml",
+            "./package.json",
+            "./webpack.config.js"
+        ]
+    },
     "twig/extra-bundle": {
-        "version": "v3.5.1"
+        "version": "v3.6.0"
     }
 }

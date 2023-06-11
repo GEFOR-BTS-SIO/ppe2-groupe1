@@ -13,57 +13,54 @@ class Message
     #[ORM\Column]
     private ?int $id = null;
 
+    
+    #[ORM\ManyToOne(inversedBy: 'messagesReceived')]
+    private ?User $receiver = null;
+
+    #[ORM\ManyToOne(inversedBy: 'messagesSender')]
+    private ?User $sender = null;
+
     #[ORM\Column(length: 255)]
-    private ?string $message_send = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $message_receved = null;
-
-    #[ORM\ManyToOne(inversedBy: 'iduser')]
-    private ?User $user = null;
-
+    private ?string $content = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getMessageSend(): ?string
+    public function getReceiver(): ?User
     {
-        return $this->message_send;
+        return $this->receiver;
     }
 
-    public function setMessageSend(string $message_send): self
+    public function setReceiver(?User $receiver): static
     {
-        $this->message_send = $message_send;
+        $this->receiver = $receiver;
 
         return $this;
     }
 
-    public function getMessageReceved(): ?string
+    public function getSender(): ?User
     {
-        return $this->message_receved;
+        return $this->sender;
     }
 
-    public function setMessageReceved(?string $message_receved): self
+    public function setSender(?User $sender): static
     {
-        $this->message_receved = $message_receved;
+        $this->sender = $sender;
 
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getContent(): ?string
     {
-        return $this->user;
+        return $this->content;
     }
 
-    public function setUser(?User $user): self
+    public function setContent(string $content): static
     {
-        $this->user = $user;
+        $this->content = $content;
 
         return $this;
     }
-
-
-
 }
