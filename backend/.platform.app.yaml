@@ -1,10 +1,6 @@
 name: app
 
-<<<<<<< HEAD
 type: php:8.1
-=======
-type: php:8.2
->>>>>>> recup_newprojet
 
 dependencies:
     php:
