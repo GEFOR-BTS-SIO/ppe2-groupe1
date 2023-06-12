@@ -4,44 +4,28 @@ namespace App\Entity;
 
 use App\Repository\MessageRepository;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Serializer\Annotation\Ignore;
 
 #[ORM\Entity(repositoryClass: MessageRepository::class)]
 class Message
 {
-
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
-    #[Ignore]
-    private ?string $content = null;
-
+    
     #[ORM\ManyToOne(inversedBy: 'messagesReceived')]
-    #[ORM\JoinColumn(nullable: true)]
     private ?User $receiver = null;
 
-    #[ORM\ManyToOne(inversedBy: 'messagesSent')]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\ManyToOne(inversedBy: 'messagesSender')]
     private ?User $sender = null;
+
+    #[ORM\Column(length: 255)]
+    private ?string $content = null;
 
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getContent(): ?string
-    {
-        return $this->content;
-    }
-
-    public function setContent(string $content): self
-    {
-        $this->content = $content;
-
-        return $this;
     }
 
     public function getReceiver(): ?User
@@ -49,7 +33,7 @@ class Message
         return $this->receiver;
     }
 
-    public function setReceiver(?User $receiver): self
+    public function setReceiver(?User $receiver): static
     {
         $this->receiver = $receiver;
 
@@ -61,9 +45,21 @@ class Message
         return $this->sender;
     }
 
-    public function setSender(?User $sender): self
+    public function setSender(?User $sender): static
     {
         $this->sender = $sender;
+
+        return $this;
+    }
+
+    public function getContent(): ?string
+    {
+        return $this->content;
+    }
+
+    public function setContent(string $content): static
+    {
+        $this->content = $content;
 
         return $this;
     }
