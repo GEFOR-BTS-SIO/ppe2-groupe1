@@ -56,8 +56,8 @@ class ApiMessageController extends AbstractController
       $messagesIReceived = $messageRepository->findBy(['receiver'=> $sender, 'sender' => $receiver]);
 
       
-        $conversationMessages= [$messagesISent,$messagesIReceived];
-        $messages = [];
+        $conversationMessages = array_merge($messagesISent, $messagesIReceived);
+        
 
         foreach ($conversationMessages as $conversationMessage) {
             $messages[] = [
