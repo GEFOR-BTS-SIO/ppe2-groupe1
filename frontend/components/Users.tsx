@@ -38,10 +38,10 @@ export const UserSelect = ({ onUserSelected }: UserProps) => {
   };
 
   return (
-    <select onChange={handleUserChange}>
+    <select className="bg-black text-white" onChange={handleUserChange}>
       <option>Choisir le destinataire</option>
       {users.map((user) => (
-        <option key={user.id} value={user.id}>
+        <option className="bg-black text-white" key={user.id} value={user.id}>
           {user.email}
         </option>
       ))}

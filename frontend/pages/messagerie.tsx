@@ -80,7 +80,7 @@ return (
           className={`${
             message.sender != selectedUserId
               ? "bg-blue-300 text-white justify-start"
-              : "bg-gray-300 justify-end"
+              : "bg-orange-300 justify-end"
           } py-2 px-4 rounded-lg ${
             message.sender != selectedUserId ? "mr-2" : "ml-2"
           }`}
