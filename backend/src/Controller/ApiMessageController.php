@@ -38,43 +38,40 @@ class ApiMessageController extends AbstractController
  #[Route('/apiconversation', name: 'app_api_conversation', methods: ['GET'])]
     public function getMessage(Request $request, MessageRepository $messageRepository, UserRepository $userRepository, SerializerInterface $serializerInterface): Response
     {
-        $receiverId = $request->query->get('receiverId');
+    $receiverId = $request->query->get('receiverId');
 
-        if (!$receiverId) {
-            return new JsonResponse(['error' => 'ReceiverId parameter is required'], Response::HTTP_BAD_REQUEST);
-        }
-
-        $receiver = $userRepository->find($receiverId);
-
-        if (!$receiver) {
-            return new JsonResponse(['error' => 'Receiver not found'], Response::HTTP_BAD_REQUEST);
-        }
-        $sender = $this->getUser();
-      $messagesISent = $messageRepository->findBy(['sender' => $sender,
-                                             'receiver'=> $receiver,
-                                          ]);
-      $messagesIReceived = $messageRepository->findBy(['receiver'=> $sender, 'sender' => $receiver]);
-
-      
-        $conversationMessages = array_merge($messagesISent, $messagesIReceived);
-        
-
-        foreach ($conversationMessages as $conversationMessage) {
-            $messages[] = [
-                'id' => $conversationMessage->getId(),
-                'content' => $conversationMessage->getContent(),
-                'sender' => $conversationMessage->getSender()->getId(),
-                'receiver' => $conversationMessage->getReceiver()->getId(),
-            ];
-        }
-        #*************************************
-
-      #*************************************
-
-        $response = new JsonResponse($messages, Response::HTTP_OK);
-
-        return $response;
+    if (!$receiverId) {
+        return new JsonResponse(['error' => 'ReceiverId parameter is required'], Response::HTTP_BAD_REQUEST);
     }
+
+    $receiver = $userRepository->find($receiverId);
+
+    if (!$receiver) {
+        return new JsonResponse(['error' => 'Receiver not found'], Response::HTTP_BAD_REQUEST);
+    }
+    $sender = $this->getUser();
+    $messagesISent = $messageRepository->findBy(['sender' => $sender, 'receiver' => $receiver]);
+    $messagesIReceived = $messageRepository->findBy(['receiver' => $sender, 'sender' => $receiver]);
+
+    $conversationMessages = array_merge($messagesISent, $messagesIReceived);
+
+    usort($conversationMessages, function ($a, $b) {
+        return $a->getId() - $b->getId();
+    });
+
+    $messages = [];
+    foreach ($conversationMessages as $conversationMessage) {
+        $messages[] = [
+            'id' => $conversationMessage->getId(),
+            'content' => $conversationMessage->getContent(),
+            'sender' => $conversationMessage->getSender()->getId(),
+            'receiver' => $conversationMessage->getReceiver()->getId(),
+        ];
+    }
+
+    $response = new JsonResponse($messages, Response::HTTP_OK);
+    return $response;
+}
 
 
     #[Route('/apiuser', name: 'app_user_api', methods: ['POST','GET'])]

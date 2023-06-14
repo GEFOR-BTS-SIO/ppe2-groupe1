@@ -9,7 +9,7 @@ type Message = {
   id: number;
   content: string;
   receiverId: number;
-  sender_id: number;
+  sender: number;
 };
 
 type MessagerieFormData = {
@@ -67,43 +67,47 @@ export function Messagerie() {
     reset();
   };
 
-  return (
-    <div className="flex flex-col">
-      {messagesListData.map((message: Message) => (
-        <div
-          key={message.id}
-          className={`flex justify-${
-            message.sender_id === selectedUserId ? "start" : "end"
-          } mb-2`}
+return (
+  <div className="flex flex-col">
+    {messagesListData.map((message) => (
+      <div
+        key={message.id}
+        className={`flex ${
+          message.sender != selectedUserId ? "justify-start" : "justify-end"
+        } mb-2`}
+      >
+        <p
+          className={`${
+            message.sender != selectedUserId
+              ? "bg-blue-300 text-white justify-start"
+              : "bg-gray-300 justify-end"
+          } py-2 px-4 rounded-lg ${
+            message.sender != selectedUserId ? "mr-2" : "ml-2"
+          }`}
         >
-          <p
-            className={`bg-gray-300 py-2 px-4 rounded-lg ${
-              message.sender_id === selectedUserId ? "ml-auto" : "mr-auto"
-            }`}
-          >
-            {message.content}
-          </p>
-        </div>
-      ))}
-      <form onSubmit={handleSubmit(onSubmit)} className="flex items-center mt-4">
-        <UserSelect onUserSelected={handleUserSelected} />
-        <label className="block mb-2 ml-4">
-          Message de test:
-          <input
-            {...register("content")}
-            className="border border-gray-300 rounded px-2 py-1"
-          />
-        </label>
-        <button
-          type="submit"
-          className="bg-blue-500 text-white py-2 px-4 rounded ml-4"
-        >
-          Envoyer
-        </button>
-      </form>
-      <ReactQueryDevtools initialIsOpen={false} />
-    </div>
-  );
+          {message.content}
+        </p>
+      </div>
+    ))}
+    <form onSubmit={handleSubmit(onSubmit)} className="flex items-center mt-4">
+      <UserSelect onUserSelected={handleUserSelected} />
+      <label className="block mb-2 ml-4">
+        Message de test:
+        <input
+          {...register("content")}
+          className="border border-gray-300 rounded px-2 py-1"
+        />
+      </label>
+      <button
+        type="submit"
+        className="bg-blue-500 text-white py-2 px-4 rounded ml-4"
+      >
+        Envoyer
+      </button>
+    </form>
+    <ReactQueryDevtools initialIsOpen={false} />
+  </div>
+);
 }
 
 // Enveloppez votre application avec QueryClientProvider

@@ -39,7 +39,7 @@ export const UserSelect = ({ onUserSelected }: UserProps) => {
 
   return (
     <select onChange={handleUserChange}>
-      <option>Select user</option>
+      <option>Choisir le destinataire</option>
       {users.map((user) => (
         <option key={user.id} value={user.id}>
           {user.email}
